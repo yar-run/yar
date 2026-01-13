@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yar-run/yar/internal/config"
+	"github.com/yar-run/yar/internal/editor"
 	"github.com/yar-run/yar/internal/errors"
 	"gopkg.in/yaml.v3"
 )
@@ -98,7 +99,7 @@ var projectEditCmd = &cobra.Command{
 	Use:   "edit",
 	Short: "Open project config in $EDITOR",
 	Long:  `Open the project configuration file in your default editor.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		loader := config.NewLoader()
 		path, err := loader.ProjectPath()
 		if err != nil {
@@ -107,11 +108,15 @@ var projectEditCmd = &cobra.Command{
 				fmt.Fprintf(os.Stderr, "Run 'yar project init' to create one.\n")
 				os.Exit(2)
 			}
-			fmt.Fprintf(os.Stderr, "error: %v\n", err)
-			return
+			return fmt.Errorf("failed to find project config: %w", err)
 		}
-		fmt.Printf("project edit: opening %s in $EDITOR\n", path)
-		fmt.Println("  [stub] would open editor")
+
+		// Open in editor
+		if err := editor.OpenInEditor(path); err != nil {
+			return fmt.Errorf("failed to open editor: %w", err)
+		}
+
+		return nil
 	},
 }
 

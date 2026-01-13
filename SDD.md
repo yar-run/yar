@@ -16,31 +16,21 @@ This document describes how to execute the Yar project using Spec-Driven Develop
 
 ## Iteration Scope Requirements
 
-**Every iteration MUST deliver user-testable functionality.** This is non-negotiable.
+**PLAN.md is the 1:1 source of truth for iteration scope.**
 
-### Valid Iteration Scope
-An iteration is valid if, after completion, the user can:
-1. Run a `yar` command and see new/changed behavior, OR
-2. Observe a new capability through the CLI
+Each iteration in PLAN.md defines exactly what that iteration delivers. When creating specs for iteration ###:
 
-### Invalid Iteration Scope
-These are NOT valid as standalone iterations:
-- Internal refactoring with no CLI impact
-- Adding types/structs with no commands using them
-- Infrastructure work that produces no observable output
+1. Read PLAN.md § Phase ### to identify scope
+2. Create specs for EXACTLY that scope - no more, no less
+3. Do NOT bundle multiple iterations together
+4. Do NOT pull work forward from future iterations
 
-### Bundling Foundational Work
-If an iteration requires foundational work (error types, internal utilities), that work MUST be bundled with the CLI features that use it. For example:
+### Scope Discipline
 
-**Wrong approach:**
-- Iteration 001: Add error types (internal only, not testable)
-- Iteration 002: Add platform detection (internal only, not testable)
-- Iteration 003: Add CLI commands (finally testable!)
-
-**Correct approach:**
-- Iteration 001: Add CLI skeleton with all commands as stubs, including error types and platform detection as needed by commands
-
-This ensures every iteration is demonstrable.
+- Iteration 003 specs contain ONLY what PLAN.md § Phase 003 defines
+- If iteration 003 depends on 002, that's fine - 002 must be complete first
+- Foundational work (types, utilities) ships in its designated iteration even if not yet user-testable
+- User-testable functionality comes when PLAN.md schedules it
 
 ## Directory Structure
 

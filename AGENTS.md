@@ -25,26 +25,54 @@ specs/{###}-{name}/
 
 | Command | Action |
 |---------|--------|
-| `specify ###` | Create specs for iteration (SPEC.md, PLAN.md, TASKS.md) |
-| `implement ###` | Execute iteration from specs |
+| `specify ###` | Create specs for iteration, notify, STOP |
+| `implement ###` | Execute iteration from specs, notify, STOP |
 | `continue` | Resume current iteration |
+
+### Command Flow
+
+**Each command is a discrete unit. Complete it, notify, then STOP and wait for the next command.**
+
+```
+User: specify 003
+Agent: [creates specs/003-*/SPEC.md, PLAN.md, TASKS.md]
+Agent: [notifies user]
+Agent: [STOPS - waits for next command]
+
+User: implement 003
+Agent: [implements from specs]
+Agent: [notifies user]
+Agent: [STOPS - waits for next command]
+```
+
+**NEVER chain commands.** Do not proceed from `specify` to `implement` without user issuing `implement`.
+
+### Pre-Specification Check
+
+Before creating specs for iteration ###:
+
+1. Read PLAN.md to identify what iteration ### should deliver
+2. Check if those deliverables already exist in codebase
+3. If deliverables exist from an earlier iteration:
+   - STOP - do not create retroactive specs
+   - Report: "Iteration ### scope was already implemented in iteration ###"
+   - Wait for user direction
 
 ### Command Recognition
 
 **These commands are IMPERATIVES, not questions.**
 
 When the user issues a command, execute it immediately:
-- `specify ###` → Read docs, then CREATE specs. Do not ask, verify, or report status first.
-- `implement ###` → Read specs, then START coding. Do not summarize or wait for confirmation.
+- `specify ###` → Read docs, check for drift, CREATE specs, notify, STOP.
+- `implement ###` → Read specs, START coding, notify when complete, STOP.
 - `continue` → Resume work immediately. Do not recap unless stuck.
 
 **DO NOT:**
-- Ask for confirmation before acting
+- Chain commands without user instruction
+- Proceed from specify to implement automatically
+- Create retroactive specs for already-implemented work
 - Report status instead of acting
 - Treat commands as information requests
-- Verify prerequisites without then proceeding to execute
-
-**The command IS the trigger. Act on it.**
 
 ---
 

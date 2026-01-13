@@ -4,9 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/yar-run/yar/internal/config"
+	"github.com/yar-run/yar/internal/editor"
 	"gopkg.in/yaml.v3"
 )
 
@@ -81,15 +83,38 @@ var configEditCmd = &cobra.Command{
 	Use:   "edit",
 	Short: "Open global config in $EDITOR",
 	Long:  `Open the global configuration file in your default editor.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		loader := config.NewLoader()
 		path, err := loader.GlobalPath()
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error: %v\n", err)
-			return
+			return fmt.Errorf("failed to get config path: %w", err)
 		}
-		fmt.Printf("config edit: opening %s in $EDITOR\n", path)
-		fmt.Println("  [stub] would open editor")
+
+		// Create default config file if it doesn't exist
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			// Ensure directory exists
+			dir := filepath.Dir(path)
+			if err := os.MkdirAll(dir, 0755); err != nil {
+				return fmt.Errorf("failed to create config directory: %w", err)
+			}
+
+			// Write default config
+			cfg := config.DefaultConfig()
+			data, err := yaml.Marshal(cfg)
+			if err != nil {
+				return fmt.Errorf("failed to marshal default config: %w", err)
+			}
+			if err := os.WriteFile(path, data, 0644); err != nil {
+				return fmt.Errorf("failed to write default config: %w", err)
+			}
+		}
+
+		// Open in editor
+		if err := editor.OpenInEditor(path); err != nil {
+			return fmt.Errorf("failed to open editor: %w", err)
+		}
+
+		return nil
 	},
 }
 
