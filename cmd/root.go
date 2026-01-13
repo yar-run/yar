@@ -9,12 +9,22 @@ import (
 
 var version = "dev" // set via -ldflags
 
+// Global flags
+var (
+	verbose      bool
+	outputFormat string
+)
+
 var rootCmd = &cobra.Command{
 	Use:   "yar",
-	Short: "Yar — local ↔ Kubernetes fleet bootstrapper",
-	Long:  "Yar bridges local dev with a prod-like cluster network: services, DNS, secrets, and packs.",
+	Short: "Yar — local <-> Kubernetes fleet bootstrapper",
+	Long: `Yar bridges local development with production Kubernetes clusters.
+
+Run services locally with Docker Compose or deploy to Kubernetes with the
+same configuration. Secrets are never stored in files - they're resolved
+at runtime from secure providers.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("yar: it sails 🏴‍☠️  (try `yar up`)")
+		cmd.Help()
 	},
 }
 
@@ -27,4 +37,8 @@ func Execute() {
 
 func init() {
 	rootCmd.Version = version
+
+	// Global flags
+	rootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "Verbose output")
+	rootCmd.PersistentFlags().StringVarP(&outputFormat, "output", "o", "table", "Output format: yaml, json, table")
 }

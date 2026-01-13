@@ -1,0 +1,6 @@
+# Valid YAML but invalid schema - container has invalid value
+container: invalid-runtime
+
+network:
+  name: yar-net
+  cidr: 172.16.34.0/23

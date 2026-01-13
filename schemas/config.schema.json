@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yar.io/schemas/config.schema.json",
+  "title": "Yar Global Configuration",
+  "description": "Global configuration for yar CLI (~/.config/yar/config.yaml)",
+  "type": "object",
+  "properties": {
+    "container": {
+      "type": "string",
+      "description": "Container runtime for local development",
+      "enum": ["colima", "docker", "nerdctl", "podman"],
+      "default": "colima"
+    },
+    "vpn": {
+      "type": "object",
+      "description": "VPN configuration for network access",
+      "properties": {
+        "provider": {
+          "type": "string",
+          "enum": ["openvpn", "wireguard", "tailscale"]
+        },
+        "configPath": {
+          "type": "string",
+          "description": "Path to VPN config file"
+        }
+      },
+      "required": ["provider"]
+    },
+    "hosts": {
+      "type": "object",
+      "description": "Host resolution configuration",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["etc", "kubedns"],
+          "default": "etc"
+        },
+        "suffix": {
+          "type": "string",
+          "description": "Optional suffix for hostnames"
+        }
+      }
+    },
+    "network": {
+      "type": "object",
+      "description": "Docker network configuration",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Network name",
+          "default": "yar-net"
+        },
+        "cidr": {
+          "type": "string",
+          "description": "Network CIDR",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+/[0-9]+$"
+        }
+      }
+    },
+    "secrets": {
+      "type": "object",
+      "description": "Secret provider configurations",
+      "properties": {
+        "local": {
+          "type": "object",
+          "description": "Local secret store configuration",
+          "properties": {
+            "provider": {
+              "type": "string",
+              "enum": ["pass", "keychain", "credential-manager", "auto"],
+              "default": "pass"
+            },
+            "store": {
+              "type": "string",
+              "description": "Path to pass store"
+            },
+            "fallback": {
+              "type": "boolean",
+              "description": "Use OS-native if primary unavailable",
+              "default": true
+            }
+          },
+          "required": ["provider"]
+        },
+        "providers": {
+          "type": "object",
+          "description": "Remote secret providers",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["github", "azure", "hashicorp", "onepassword", "aws", "gcp"]
+              }
+            },
+            "required": ["type"]
+          }
+        }
+      }
+    },
+    "clusters": {
+      "type": "object",
+      "description": "Cluster configurations",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "provider": {
+            "type": "string",
+            "enum": ["compose", "k8s"]
+          },
+          "context": {
+            "type": "string",
+            "description": "Kubeconfig context name"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "Default namespace"
+          }
+        },
+        "required": ["provider"]
+      }
+    }
+  },
+  "required": ["container"]
+}

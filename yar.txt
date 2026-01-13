@@ -1,0 +1,269 @@
+Yar CLI
+
+Yar CLI Examples
+
+Yar Configuration
+
+Yar Project Configuration
+
+Yar — Fleet Bootstrapper (local ↔ Cluster)
+
+# Edit configuration
+yar config edit
+
+# ~/.config/yar/config.yaml
+# Machine-wide defaults and provider wiring for yar.
+
+# ./yar.yaml
+
+Usage:
+yar <object> <verb> [flags]
+# Create project manifest
+yar project init
+
+Objects & verbs:
+fleet
+up [env]
+down [env]
+destroy [env]
+restart [env]
+update
+status
+config
+get [-o fmt]
+edit
+project
+init [-o fmt]
+get [-o fmt]
+edit [-o fmt]
+pack
+list
+install <name>
+remove <name>
+template
+build [--env <e>]
+render [--env <e>]
+publish
+
+Hoist the fleet (bootstrap Colima/VPN/DNS; start services)
+Bring the fleet to port (stop services)
+Remove the fleet
+Restart fleet, apply config
+Update yar and pack catalog
+Show fleet status (planned)
+Show global config (~/.config/yar/config.yaml)
+Edit global config
+Guided setup (creates ./yar.yaml)
+Show project config
+Edit project config
+List available service packs
+Install a pack (e.g. redis)
+Uninstall a pack (alias: uninstall)
+Produce deploy assets (Helm chart/subcharts/values or Compose)
+Render manifests offline (Kubernetes/Compose)
+Publish charts/subcharts to artifact repo
+
+secret
+set <key> <val> [--env <e>] [--store <s>]
+Set a secret
+get <key>
+Inspect a secret (redacted)
+delete <key>
+Delete a secret (redacted)
+list
+List required secrets
+hosts
+set <name> <ip>
+get <name>
+delete <name>
+list
+
+project: ai-agents-backend
+
+Manually configure a host
+Inspect a host block
+Delete a host block
+List yar-managed host blocks
+
+doctor
+run
+Checks for VPN, DNS, hosts, clusters, secrets
+# aliases: `yar sound`, `yar repair`
+
+# Configure project manifest
+yar project edit
+# Deploy and start project
+yar fleet up
+# or: yar hoist
+# Halt project
+yar fleet down
+# or: yar dock
+# Stop and delete services
+yar fleet destroy
+# or: yar scuttle
+# Local: generate prod artifacts without committing
+yar template build --env prod
+# Package and push from CI (same command works locally if you want)
+yar template build --env prod --package --push oci://ghcr.io/acme/charts
+# (alt: yar template publish --env prod --to oci://ghcr.io/acme/charts)
+# Update only env values (no chart template changes)
+yar template build --env staging --values-only
+# Produce artifacts and lock versions for reproducibility
+yar template build --env prod --lock
+
+# Which local container runtime yar should manage for "compose" clusters
+container: colima
+# options: colima | docker | nerdctl
+# VPN provider (required MacOS and Windows)
+vpn:
+provider: openvpn
+configPath: ~/.config/yar/vpn/client.ovpn
+# How yar resolves service FQDNs on your box
+hosts:
+mode: etc
+# options: etc | kubedns
+suffix: ""
+# optional, e.g. ".local"
+# Optional: default docker network yar expects for Compose
+network:
+name: yar-net
+cidr: 172.16.34.0/23
+# network CIDR block
+# Secret provider registry (names referenced by project `environments[*].secrets`)
+# Providers: pass, keychain, github, azure, gcp, aws, hashicorp
+secrets:
+pass:
+# local dev — maps {{ var }} to `pass` (or keychain)
+provider: pass
+# local pass provider
+store: default
+github:
+provider: github
+organization: quay
+# yar will assume an ESO ClusterSecretStore named "github" exists,
+# bootstrapped with a K8s Secret holding the GitHub App creds.
+clusterSecretStore: github
+bootstrapSecretName: github-app-creds
+vault:
+provider: azure
+organization: quay
+vaultName: quay-vault
+tenantId: "<guid>"
+# optional if resolvable from env
+clientId: "<guid>"
+# only if you want yar to pull directly
+# Cluster registry (names referenced by project `environments[*].cluster`)
+clusters:
+local:
+provider: k8s
+# or compose
+context: local
+# kube context name (kubectl config get-contexts)
+namespace: default
+
+Other:
+version
+help [object]
+
+dev:
+provider: k8s
+context: aks08-dev-eus
+namespace: default
+
+Print yar version
+Show help for an object
+
+Global flags:
+-h, --help
+-v, --verbose
+-o, --output <fmt>
+
+Show help
+Verbose output
+Output format (yaml|json|table)
+
+qa:
+provider: k8s
+context: aks06-qa-eus
+namespace: default
+
+Ergonomic aliases:
+yar hoist [env]
+yar dock [env]
+yar scuttle [env]
+yar swab
+
+→ yar fleet up [env]
+→ yar fleet down [env]
+→ yar fleet destroy [env] (danger)
+→ yar doctor run --fix-cache (or your cleanup action)
+
+prod:
+provider: k8s
+context: aks04-prod-eus
+namespace: default
+
+Yar Custom Service Packs
+# ~/.config/yar/packs/<pack>/
+schema.json
+meta.json
+templates/
+helm/
+charts/
+<pack>/
+Chart.yaml
+README.md
+templates/
+deployment.yaml
+service.yaml
+configmap.yaml
+virtualService.yaml
+docker/
+docker-compose.yaml
+
+environments:
+# default build/render target if not specified
+local:
+cluster: local
+secrets: pass
+# local secret provider (e.g., pass, keychain)
+dev:
+cluster: dev
+secrets: github
+
+# matches a ClusterSecretStore "github"
+
+qa:
+cluster: qa
+secrets: github
+prod:
+cluster: prod
+secrets: github
+services:
+- name: redis
+namespace: ai-agents-redis
+pack: redis
+params:
+passwordRef: redis_pass
+- name: kafka
+namespace: ai-agents-kafka
+pack: kafka
+params:
+passwordRef: kafka_pass
+- name: app
+pack: app
+requires: [redis, kafka] # explicit for ordering
+replicas: 3
+ingress:
+host: api.ai-agents-backend
+env:
+# talk to mesh by stable FQDNs (same local + k8s)
+REDIS_HOST: redis.ai-agents-redis
+KAFKA_HOST: kafka.ai-agents-kafka
+LOG_LEVEL: debug
+# legacy/out-of-band secret reference (provider+key form)
+LEGACY_SECRET:
+provider: vault
+key: some_key
+
+

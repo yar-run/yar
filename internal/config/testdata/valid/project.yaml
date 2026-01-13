@@ -1,0 +1,45 @@
+# Full valid project configuration
+project: my-backend
+
+environments:
+  local:
+    cluster: local
+    secrets: local
+  dev:
+    cluster: dev
+    secrets: github
+  prod:
+    cluster: prod
+    secrets: azure
+
+services:
+  - name: redis
+    pack: redis
+    replicas: 1
+    params:
+      passwordRef: redis_pass
+      port: 6379
+
+  - name: postgres
+    pack: postgres
+    replicas: 1
+    params:
+      passwordRef: pg_pass
+      database: myapp
+
+  - name: api
+    pack: node
+    requires:
+      - redis
+      - postgres
+    replicas: 3
+    ingress:
+      host: api.example.com
+      path: /
+      tls: true
+    env:
+      NODE_ENV: production
+      LOG_LEVEL: info
+    secretRefs:
+      API_KEY: api_key_secret
+      JWT_SECRET: jwt_secret
