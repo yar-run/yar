@@ -105,14 +105,15 @@ See **SDD.md § "Handling Spec Changes"** for details.
 ## Commit Format
 
 ```
-[{iteration}] {type}: {description}
+type(scope): description
 
 Types: feat, fix, test, docs, refactor
+Scope: optional, e.g., config, docker, secrets
 ```
 
 Examples:
 ```bash
-git commit -m "[001] feat: create internal package directories"
-git commit -m "[007] test: add Docker client unit tests"
-git commit -m "[001] complete: project structure and dependencies"
+git commit -m "feat(config): add YAML loader"
+git commit -m "test(docker): add client unit tests"
+git commit -m "docs: update CLI reference"
 ```
