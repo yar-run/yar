@@ -29,6 +29,23 @@ specs/{###}-{name}/
 | `implement ###` | Execute iteration from specs |
 | `continue` | Resume current iteration |
 
+### Command Recognition
+
+**These commands are IMPERATIVES, not questions.**
+
+When the user issues a command, execute it immediately:
+- `specify ###` → Read docs, then CREATE specs. Do not ask, verify, or report status first.
+- `implement ###` → Read specs, then START coding. Do not summarize or wait for confirmation.
+- `continue` → Resume work immediately. Do not recap unless stuck.
+
+**DO NOT:**
+- Ask for confirmation before acting
+- Report status instead of acting
+- Treat commands as information requests
+- Verify prerequisites without then proceeding to execute
+
+**The command IS the trigger. Act on it.**
+
 ---
 
 ## Quick Reference
