@@ -1,4 +1,4 @@
-# Iteration 001: Error & Platform Tasks
+# Iteration 001: Foundation Tasks
 
 ## Status Legend
 - [ ] Not started
@@ -107,6 +107,13 @@
 - [x] Ensure all types compile and satisfy interfaces
 - [x] Verify tests pass (green)
 
+**Verify:**
+```bash
+go build ./...
+go test ./internal/errors/...
+go vet ./...
+```
+
 ---
 
 ## Phase B: Platform Detection
@@ -176,6 +183,108 @@
 - [x] Implement `ExpandPath()` with tilde and env var expansion
 - [x] Verify tests pass (green)
 
+**Verify:**
+```bash
+go build ./...
+go test ./internal/platform/...
+go vet ./...
+```
+
+---
+
+## Phase C: CLI Skeleton
+
+### C1. Root Command
+
+**Implement:**
+- [x] Update `cmd/root.go` with global flags (--verbose, --output)
+- [x] Verify `./yar --help` works
+
+### C2. Fleet Commands
+
+**Implement:**
+- [x] Create `cmd/fleet.go` with up/down/destroy/restart/status/update subcommands
+- [x] Each prints stub message
+- [x] Verify `./yar fleet --help` works
+
+### C3. Config Commands
+
+**Implement:**
+- [x] Create `cmd/config.go` with get/edit subcommands
+- [x] `get` uses `platform.ConfigDir()` for real path
+- [x] Verify `./yar config get` shows path
+
+### C4. Project Commands
+
+**Implement:**
+- [x] Create `cmd/project.go` with init/get/edit subcommands
+- [x] Verify `./yar project --help` works
+
+### C5. Pack Commands
+
+**Implement:**
+- [x] Create `cmd/pack.go` with list/install/remove subcommands
+- [x] Verify `./yar pack --help` works
+
+### C6. Template Commands
+
+**Implement:**
+- [x] Create `cmd/template.go` with build/render/publish subcommands
+- [x] Verify `./yar template --help` works
+
+### C7. Secret Commands
+
+**Implement:**
+- [x] Create `cmd/secret.go` with set/get/delete/list/sync subcommands
+- [x] Verify `./yar secret --help` works
+
+### C8. Hosts Commands
+
+**Implement:**
+- [x] Create `cmd/hosts.go` with set/get/delete/list subcommands
+- [x] Verify `./yar hosts --help` works
+
+### C9. Doctor Command
+
+**Implement:**
+- [x] Create `cmd/doctor.go` with run subcommand
+- [x] Accepts --fix and --fix-cache flags
+- [x] Prints health check table
+- [x] Verify `./yar doctor run` works
+
+### C10. Aliases
+
+**Implement:**
+- [x] Create `cmd/aliases.go` with hoist/dock/scuttle/swab/up/down
+- [x] Each alias calls appropriate fleet/doctor command
+- [x] Verify `./yar hoist` works
+
+**Verify:**
+```bash
+go build ./...
+go test ./...
+go vet ./...
+./yar --help
+./yar fleet up
+./yar config get
+./yar doctor run
+./yar hoist
+```
+
+---
+
+## Functional Tests
+
+| Command | Expected Result | Status |
+|---------|-----------------|--------|
+| `yar --help` | Shows all commands | [x] Pass |
+| `yar fleet up` | Prints stub message | [x] Pass |
+| `yar fleet down` | Prints stub message | [x] Pass |
+| `yar config get` | Shows real config path | [x] Pass |
+| `yar doctor run` | Shows health table | [x] Pass |
+| `yar hoist` | Same as fleet up | [x] Pass |
+| `yar --version` | Shows version | [x] Pass |
+
 ---
 
 ## Completion Checklist
@@ -183,8 +292,11 @@
 - [x] All tests written and passing
 - [x] All error types match SPEC.md interfaces
 - [x] All platform functions match SPEC.md interfaces
+- [x] All CLI commands callable (stubs)
+- [x] All aliases work correctly
 - [x] `go build ./...` succeeds
 - [x] `go test ./...` passes
 - [x] `go vet ./...` clean
+- [x] Functional tests verified
 - [x] TASKS.md fully checked off
 - [x] Exit criteria from SPEC.md verified

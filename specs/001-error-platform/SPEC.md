@@ -1,23 +1,21 @@
-# Iteration 001: Error & Platform Specification
+# Iteration 001: Foundation - Error Types, Platform Detection & CLI Skeleton
 
 ## Overview
 
-This iteration implements foundational error types and platform detection utilities. Error types provide structured, typed errors for all yar operations. Platform utilities detect the operating system and provide XDG-compliant configuration and cache directory paths.
+This iteration implements the foundational layer for yar: typed error definitions, platform detection utilities, and a complete CLI skeleton with all commands as stubs. This provides the infrastructure for all subsequent iterations and enables functional testing from day one.
 
 ## Scope
 
 ### Included
-- Typed error definitions: `ConfigError`, `ValidationError`, `NotFoundError`, `SecretError`, `PackError`, `DockerError`, `KubernetesError`, `NetworkError`
-- Error formatting with `Error()` method returning actionable messages
-- Platform detection returning `darwin`, `linux`, or `windows`
-- `ConfigDir()` returning XDG-compliant config directory
-- `CacheDir()` returning XDG-compliant cache directory
-- Path helper utilities
+- **Error Types**: `ConfigError`, `ValidationError`, `NotFoundError`, `SecretError`, `PackError`, `DockerError`, `KubernetesError`, `NetworkError`
+- **Platform Detection**: OS detection, XDG-compliant directory paths
+- **CLI Skeleton**: Complete command structure with all 15+ commands as stubs
 
 ### NOT Included (deferred)
 - Error wrapping strategies (will evolve with usage)
 - Platform-specific privilege escalation (iteration 028)
 - Platform-specific keyring access (iteration 014)
+- Actual command implementations (subsequent iterations)
 
 ---
 
@@ -168,6 +166,33 @@ func HomeDir() (string, error)
 func ExpandPath(path string) (string, error)
 ```
 
+### CLI Commands (Stubs)
+
+All commands implemented as stubs that print placeholder messages:
+
+| Command | Subcommands | Description |
+|---------|-------------|-------------|
+| `yar fleet` | up, down, destroy, restart, status, update | Fleet lifecycle management |
+| `yar config` | get, edit | Configuration management |
+| `yar project` | init, get, edit | Project management |
+| `yar pack` | list, install, remove | Pack management |
+| `yar template` | build, render, publish | Template operations |
+| `yar secret` | set, get, delete, list, sync | Secret management |
+| `yar hosts` | set, get, delete, list | Hosts file management |
+| `yar doctor` | run | System health checks |
+
+**Aliases** (nautical theme):
+- `hoist` → `fleet up`
+- `dock` → `fleet down`
+- `scuttle` → `fleet destroy`
+- `swab` → `doctor run --fix`
+- `up` → `fleet up`
+- `down` → `fleet down`
+
+**Global Flags**:
+- `--verbose, -v` - Verbose output
+- `--output, -o` - Output format (text, json, yaml)
+
 ---
 
 ## Data Structures
@@ -191,10 +216,10 @@ const (
 ## Dependencies
 
 ### External Packages
-- None (uses only stdlib)
+- `github.com/spf13/cobra` - CLI framework
 
 ### Internal Packages
-- None (this is a foundational package)
+- None (this is a foundational iteration)
 
 ---
 
@@ -215,6 +240,16 @@ This iteration establishes foundations for these invariants:
 | `internal/errors/errors_test.go` | Unit tests for error formatting |
 | `internal/platform/platform.go` | Platform detection and path utilities |
 | `internal/platform/platform_test.go` | Unit tests for platform detection |
+| `cmd/root.go` | Root command with global flags |
+| `cmd/fleet.go` | Fleet commands (up/down/destroy/restart/status/update) |
+| `cmd/config.go` | Config commands (get/edit) |
+| `cmd/project.go` | Project commands (init/get/edit) |
+| `cmd/pack.go` | Pack commands (list/install/remove) |
+| `cmd/template.go` | Template commands (build/render/publish) |
+| `cmd/secret.go` | Secret commands (set/get/delete/list/sync) |
+| `cmd/hosts.go` | Hosts commands (set/get/delete/list) |
+| `cmd/doctor.go` | Doctor command (run) |
+| `cmd/aliases.go` | Nautical aliases (hoist/dock/scuttle/swab/up/down) |
 
 ---
 
@@ -223,41 +258,50 @@ This iteration establishes foundations for these invariants:
 ### Unit Tests
 
 #### errors_test.go
-- [ ] `ConfigError.Error()` returns formatted message with path and field
-- [ ] `ConfigError.Unwrap()` returns underlying error
-- [ ] `ValidationError.Error()` returns formatted message with field and value
-- [ ] `ValidationError.Error()` handles multiple errors
-- [ ] `NotFoundError.Error()` returns formatted message with resource and name
-- [ ] `SecretError.Error()` returns formatted message with provider, key, and op
-- [ ] `SecretError.Unwrap()` returns underlying error
-- [ ] `PackError.Error()` returns formatted message
-- [ ] `PackError.Unwrap()` returns underlying error
-- [ ] `DockerError.Error()` returns formatted message
-- [ ] `DockerError.Unwrap()` returns underlying error
-- [ ] `KubernetesError.Error()` returns formatted message with namespace
-- [ ] `KubernetesError.Unwrap()` returns underlying error
-- [ ] `NetworkError.Error()` returns formatted message
-- [ ] `NetworkError.Unwrap()` returns underlying error
-- [ ] All error types satisfy `error` interface
-- [ ] Error types with `Err` field satisfy `errors.Unwrap` interface
+- [x] `ConfigError.Error()` returns formatted message with path and field
+- [x] `ConfigError.Unwrap()` returns underlying error
+- [x] `ValidationError.Error()` returns formatted message with field and value
+- [x] `ValidationError.Error()` handles multiple errors
+- [x] `NotFoundError.Error()` returns formatted message with resource and name
+- [x] `SecretError.Error()` returns formatted message with provider, key, and op
+- [x] `SecretError.Unwrap()` returns underlying error
+- [x] `PackError.Error()` returns formatted message
+- [x] `PackError.Unwrap()` returns underlying error
+- [x] `DockerError.Error()` returns formatted message
+- [x] `DockerError.Unwrap()` returns underlying error
+- [x] `KubernetesError.Error()` returns formatted message with namespace
+- [x] `KubernetesError.Unwrap()` returns underlying error
+- [x] `NetworkError.Error()` returns formatted message
+- [x] `NetworkError.Unwrap()` returns underlying error
+- [x] All error types satisfy `error` interface
+- [x] Error types with `Err` field satisfy `errors.Unwrap` interface
 
 #### platform_test.go
-- [ ] `Platform()` returns one of darwin, linux, windows
-- [ ] `ConfigDir()` returns non-empty path
-- [ ] `ConfigDir()` respects `$XDG_CONFIG_HOME` when set
-- [ ] `CacheDir()` returns non-empty path
-- [ ] `CacheDir()` respects `$XDG_CACHE_HOME` when set
-- [ ] `DataDir()` returns non-empty path
-- [ ] `DataDir()` respects `$XDG_DATA_HOME` when set
-- [ ] `HomeDir()` returns non-empty path
-- [ ] `ExpandPath()` expands `~` to home directory
-- [ ] `ExpandPath()` expands environment variables
-- [ ] `ExpandPath()` handles paths without expansion
+- [x] `Platform()` returns one of darwin, linux, windows
+- [x] `ConfigDir()` returns non-empty path
+- [x] `ConfigDir()` respects `$XDG_CONFIG_HOME` when set
+- [x] `CacheDir()` returns non-empty path
+- [x] `CacheDir()` respects `$XDG_CACHE_HOME` when set
+- [x] `DataDir()` returns non-empty path
+- [x] `DataDir()` respects `$XDG_DATA_HOME` when set
+- [x] `HomeDir()` returns non-empty path
+- [x] `ExpandPath()` expands `~` to home directory
+- [x] `ExpandPath()` expands environment variables
+- [x] `ExpandPath()` handles paths without expansion
+
+### Functional Tests
+
+| Command | Expected Result |
+|---------|-----------------|
+| `yar --help` | Shows all commands with descriptions |
+| `yar fleet up` | Prints "starting services for environment 'local'" |
+| `yar fleet down` | Prints "stopping services for environment 'local'" |
+| `yar config get` | Shows config directory path from platform.ConfigDir() |
+| `yar doctor run` | Shows health check table |
+| `yar hoist` | Same as `yar fleet up` |
+| `yar --version` | Shows version string |
 
 ### Integration Tests
-- None for this iteration
-
-### Test Fixtures
 - None for this iteration
 
 ---
@@ -269,13 +313,16 @@ This iteration establishes foundations for these invariants:
 - [x] `Platform()` returns correct OS
 - [x] `ConfigDir()` returns valid XDG-compliant path
 - [x] `CacheDir()` returns valid XDG-compliant path
+- [x] All CLI commands callable (stubs)
+- [x] All aliases work correctly
 - [x] All unit tests pass
 - [x] `go build ./...` succeeds
 - [x] `go test ./...` passes
 - [x] `go vet ./...` clean
+- [x] `./yar --help` shows all commands
 
 ---
 
 ## Clarifications
 
-*Document any spec ambiguities resolved during implementation here.*
+*Scope expanded during implementation to include CLI skeleton, enabling functional testing from iteration 001. This ensures every iteration delivers user-testable functionality.*
