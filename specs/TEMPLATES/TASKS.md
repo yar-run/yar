@@ -21,6 +21,11 @@
 - [ ] Verify test passes (green)
 - [ ] Refactor if needed
 
+**Verify:**
+- [ ] `go build ./...` succeeds
+- [ ] `go test ./...` passes
+- [ ] `go vet ./...` clean
+
 ### A2. {Category}
 
 **Test First:**
@@ -28,6 +33,10 @@
 
 **Implement:**
 - [ ] Implement {functionality}
+
+**Verify:**
+- [ ] `go build ./...` succeeds
+- [ ] `go test ./...` passes
 
 ---
 
@@ -41,11 +50,34 @@
 **Implement:**
 - [ ] Implement {functionality}
 
+**Verify:**
+- [ ] `go build ./...` succeeds
+- [ ] `go test ./...` passes
+
+---
+
+## Functional Tests
+
+After this iteration, verify the following commands work:
+
+| Command | Expected Result |
+|---------|-----------------|
+| `yar <command>` | Description of expected output |
+| `yar <command> --flag` | Description with flag behavior |
+
+**Build and run:**
+```bash
+cd ~/code/yar
+go build -o yar .
+./yar <command>
+```
+
 ---
 
 ## Completion Checklist
 
-- [ ] All tests written and passing
+- [ ] All unit tests written and passing
+- [ ] All functional tests verified manually
 - [ ] All interfaces match SPEC.md
 - [ ] `go build ./...` succeeds
 - [ ] `go test ./...` passes  

@@ -10,6 +10,38 @@ This document describes how to execute the Yar project using Spec-Driven Develop
 
 **Iterative Refinement**: Each iteration builds on the previous. Specs may be refined as implementation reveals constraints, but changes are explicit and documented.
 
+**Functional Testing Per Iteration**: Every iteration MUST deliver user-testable functionality. Internal refactors or foundational work must be bundled with user-facing features. After each iteration, the user should be able to run the `yar` binary and observe new behavior.
+
+**Build Verification**: Every task that modifies code MUST include explicit build and test verification steps. Never assume code compiles—verify it.
+
+## Iteration Scope Requirements
+
+**Every iteration MUST deliver user-testable functionality.** This is non-negotiable.
+
+### Valid Iteration Scope
+An iteration is valid if, after completion, the user can:
+1. Run a `yar` command and see new/changed behavior, OR
+2. Observe a new capability through the CLI
+
+### Invalid Iteration Scope
+These are NOT valid as standalone iterations:
+- Internal refactoring with no CLI impact
+- Adding types/structs with no commands using them
+- Infrastructure work that produces no observable output
+
+### Bundling Foundational Work
+If an iteration requires foundational work (error types, internal utilities), that work MUST be bundled with the CLI features that use it. For example:
+
+**Wrong approach:**
+- Iteration 001: Add error types (internal only, not testable)
+- Iteration 002: Add platform detection (internal only, not testable)
+- Iteration 003: Add CLI commands (finally testable!)
+
+**Correct approach:**
+- Iteration 001: Add CLI skeleton with all commands as stubs, including error types and platform detection as needed by commands
+
+This ensures every iteration is demonstrable.
+
 ## Directory Structure
 
 ```
@@ -156,6 +188,7 @@ How to revert if the iteration fails.
 
 ## Status
 - [ ] Not started
+- [~] In progress
 - [x] Complete
 
 ## Phase A: {Name}
@@ -170,19 +203,25 @@ How to revert if the iteration fails.
   - [ ] Subtask 3.2
 - [ ] Task 4: Description
 
-### Testing
-- [ ] Write unit tests for X
-- [ ] Write integration tests for Y
-
-### Documentation
-- [ ] Update README
-- [ ] Add code comments
+### Verification
+- [ ] `go build ./...` succeeds
+- [ ] `go test ./...` passes
+- [ ] `go vet ./...` clean
 
 ## Phase B: {Name}
 ...
 
+## Functional Tests
+
+After this iteration, verify:
+
+| Command | Expected Result |
+|---------|-----------------|
+| `yar <command>` | Description of expected output |
+
 ## Completion Checklist
 - [ ] All tests pass
+- [ ] All functional tests verified manually
 - [ ] Code reviewed
 - [ ] Documentation updated
 - [ ] Exit criteria from SPEC.md met
@@ -219,7 +258,14 @@ How to revert if the iteration fails.
 - [ ] Implement {functionality}
 - [ ] Verify test passes (green)
 - [ ] Refactor if needed
+
+**Verify:**
+- [ ] `go build ./...` succeeds
+- [ ] `go test ./...` passes
+- [ ] `go vet ./...` clean
 ```
+
+**CRITICAL**: The "Verify" section is mandatory for every task group. Never skip build verification.
 
 **Note**: Scaffolding iterations (like 000) with no testable logic are exempt from TDD.
 
@@ -246,7 +292,34 @@ Types: `feat`, `fix`, `test`, `docs`, `refactor`
 5. Build for all platforms
 6. Manual smoke test of new commands
 
-### 6. Documentation Phase
+### 6. Functional Testing Phase
+
+**Goal**: Verify user-facing functionality works as expected.
+
+**Requirement**: Every iteration MUST have a "Functional Tests" section in TASKS.md that describes:
+- Commands the user can run
+- Expected output or behavior
+- How to verify the feature works
+
+**Example**:
+```markdown
+## Functional Tests
+
+After this iteration, verify:
+
+| Command | Expected Result |
+|---------|-----------------|
+| `yar fleet up` | Shows "starting services for environment 'local'" |
+| `yar config get` | Shows path to config file |
+| `yar --help` | Lists all commands including new ones |
+```
+
+This ensures:
+- No iteration ships "invisible" internal-only changes
+- User can validate work immediately
+- Features are demonstrable, not theoretical
+
+### 7. Documentation Phase
 
 **Goal**: Update docs to reflect new functionality.
 
@@ -256,7 +329,7 @@ Types: `feat`, `fix`, `test`, `docs`, `refactor`
 3. Update ARCHITECTURE.md if structural changes
 4. Add examples for new features
 
-### 7. Completion Phase
+### 8. Completion Phase
 
 **Goal**: Mark iteration complete and prepare for next.
 
