@@ -1,0 +1,6 @@
+# Invalid YAML - bad syntax
+container: colima
+  network:
+    name: yar-net
+  this is not valid yaml
+: : :

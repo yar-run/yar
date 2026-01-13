@@ -1,0 +1,11 @@
+# Minimal valid project configuration
+project: minimal
+
+environments:
+  local:
+    cluster: local
+    secrets: pass
+
+services:
+  - name: redis
+    pack: redis

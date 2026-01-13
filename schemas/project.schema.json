@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yar.io/schemas/project.schema.json",
+  "title": "Yar Project Configuration",
+  "description": "Project configuration for yar CLI (yar.yaml)",
+  "type": "object",
+  "properties": {
+    "project": {
+      "type": "string",
+      "description": "Project name (used for container prefixes, namespaces)",
+      "pattern": "^[a-z][a-z0-9-]*$"
+    },
+    "environments": {
+      "type": "object",
+      "description": "Environment definitions",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "cluster": {
+            "type": "string",
+            "description": "Reference to cluster in global config"
+          },
+          "secrets": {
+            "type": "string",
+            "description": "Reference to secret provider in global config"
+          }
+        },
+        "required": ["cluster", "secrets"]
+      },
+      "minProperties": 1
+    },
+    "services": {
+      "type": "array",
+      "description": "Service definitions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique service name",
+            "pattern": "^[a-z][a-z0-9-]*$"
+          },
+          "namespace": {
+            "type": "string",
+            "description": "Override namespace"
+          },
+          "pack": {
+            "type": "string",
+            "description": "Pack name"
+          },
+          "requires": {
+            "type": "array",
+            "description": "Dependency service names",
+            "items": {
+              "type": "string"
+            }
+          },
+          "replicas": {
+            "type": "integer",
+            "description": "Replica count",
+            "minimum": 1,
+            "default": 1
+          },
+          "params": {
+            "type": "object",
+            "description": "Pack parameters"
+          },
+          "ingress": {
+            "type": "object",
+            "description": "Ingress configuration",
+            "properties": {
+              "host": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string",
+                "default": "/"
+              },
+              "tls": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            "required": ["host"]
+          },
+          "env": {
+            "type": "object",
+            "description": "Environment variables (non-secret)",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "secretRefs": {
+            "type": "object",
+            "description": "Secret references",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "required": ["name", "pack"]
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["project", "environments", "services"]
+}

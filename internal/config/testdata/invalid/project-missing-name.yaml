@@ -1,0 +1,9 @@
+# Missing required 'project' field
+environments:
+  local:
+    cluster: local
+    secrets: pass
+
+services:
+  - name: redis
+    pack: redis

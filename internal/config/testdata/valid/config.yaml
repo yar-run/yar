@@ -1,0 +1,33 @@
+# Full valid global configuration
+container: colima
+
+vpn:
+  provider: openvpn
+  configPath: ~/.config/yar/vpn/client.ovpn
+
+hosts:
+  mode: etc
+  suffix: .local
+
+network:
+  name: yar-net
+  cidr: 172.16.34.0/23
+
+secrets:
+  local:
+    provider: pass
+    store: ~/.password-store
+    fallback: true
+  providers:
+    github:
+      type: github
+    azure:
+      type: azure
+
+clusters:
+  local:
+    provider: compose
+  dev:
+    provider: k8s
+    context: dev-cluster
+    namespace: development
