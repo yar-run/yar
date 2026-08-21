@@ -13,56 +13,56 @@
 ### A1. Container and State Types
 
 **Test First:**
-- [ ] Write tests for Container struct field access
-- [ ] Write tests for ContainerState status values
-- [ ] Verify tests compile
+- [x] Write tests for Container struct field access
+- [x] Write tests for ContainerState status values
+- [x] Verify tests compile
 
 **Implement:**
-- [ ] Create `internal/docker/container_types.go`
-- [ ] Define Container struct with ID, Name, Image, Command, Created, State, Ports, Labels, NetworkIDs
-- [ ] Define ContainerState with Status, Running, Paused, ExitCode, StartedAt, FinishedAt, Error
+- [x] Create `internal/docker/container_types.go`
+- [x] Define Container struct with ID, Name, Image, Command, Created, State, Ports, Labels, NetworkIDs
+- [x] Define ContainerState with Status, Running, Paused, ExitCode, StartedAt, FinishedAt, Error
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ### A2. ContainerConfig Types
 
 **Test First:**
-- [ ] Write tests for ContainerConfig with all fields
-- [ ] Write tests for PortMapping defaults
-- [ ] Write tests for VolumeMount types
-- [ ] Write tests for RestartPolicy values
+- [x] Write tests for ContainerConfig with all fields
+- [x] Write tests for PortMapping defaults
+- [x] Write tests for VolumeMount types
+- [x] Write tests for RestartPolicy values
 
 **Implement:**
-- [ ] Define ContainerConfig struct
-- [ ] Define PortMapping struct
-- [ ] Define VolumeMount struct
-- [ ] Define RestartPolicy struct
+- [x] Define ContainerConfig struct
+- [x] Define PortMapping struct
+- [x] Define VolumeMount struct
+- [x] Define RestartPolicy struct
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ### A3. Option Types
 
 **Test First:**
-- [ ] Write tests for ContainerRemoveOptions
-- [ ] Write tests for ContainerListOptions
-- [ ] Write tests for ContainerLogOptions
-- [ ] Write tests for WaitCondition constants
-- [ ] Write tests for ContainerWaitResult
+- [x] Write tests for ContainerRemoveOptions
+- [x] Write tests for ContainerListOptions
+- [x] Write tests for ContainerLogOptions
+- [x] Write tests for WaitCondition constants
+- [x] Write tests for ContainerWaitResult
 
 **Implement:**
-- [ ] Define ContainerRemoveOptions
-- [ ] Define ContainerListOptions
-- [ ] Define ContainerLogOptions
-- [ ] Define WaitCondition type and constants
-- [ ] Define ContainerWaitResult
+- [x] Define ContainerRemoveOptions
+- [x] Define ContainerListOptions
+- [x] Define ContainerLogOptions
+- [x] Define WaitCondition type and constants
+- [x] Define ContainerWaitResult
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ---
 
@@ -71,23 +71,23 @@
 ### B1. Error Constructors
 
 **Test First:**
-- [ ] Write tests for ErrContainerCreate
-- [ ] Write tests for ErrContainerStart
-- [ ] Write tests for ErrContainerStop
-- [ ] Write tests for ErrContainerRemove
-- [ ] Write tests for ErrContainerInspect
-- [ ] Write tests for ErrContainerList
-- [ ] Write tests for ErrContainerLogs
-- [ ] Write tests for ErrContainerNotFound
-- [ ] Write tests for ErrContainerAlreadyExists
-- [ ] Write tests for ErrContainerRunning
+- [x] Write tests for ErrContainerCreate
+- [x] Write tests for ErrContainerStart
+- [x] Write tests for ErrContainerStop
+- [x] Write tests for ErrContainerRemove
+- [x] Write tests for ErrContainerInspect
+- [x] Write tests for ErrContainerList
+- [x] Write tests for ErrContainerLogs
+- [x] Write tests for ErrContainerNotFound
+- [x] Write tests for ErrContainerAlreadyExists
+- [x] Write tests for ErrContainerRunning
 
 **Implement:**
-- [ ] Add container error constructors to errors.go
+- [x] Add container error constructors to errors.go
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ---
 
@@ -96,88 +96,88 @@
 ### C1. MockClient Container Fields
 
 **Implement:**
-- [ ] Add container mock response fields to MockClient
-- [ ] Add container call recording fields
-- [ ] Add container callback fields
+- [x] Add container mock response fields to MockClient
+- [x] Add container call recording fields
+- [x] Add container callback fields
 
 ### C2. MockClient ContainerCreate
 
 **Test First:**
-- [ ] Test ContainerCreate returns configured ID
-- [ ] Test ContainerCreate records call details
-- [ ] Test ContainerCreate returns configured error
-- [ ] Test ContainerCreate callback behavior
+- [x] Test ContainerCreate returns configured ID
+- [x] Test ContainerCreate records call details
+- [x] Test ContainerCreate returns configured error
+- [x] Test ContainerCreate callback behavior
 
 **Implement:**
-- [ ] Implement MockClient.ContainerCreate
+- [x] Implement MockClient.ContainerCreate
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ### C3. MockClient ContainerStart/Stop
 
 **Test First:**
-- [ ] Test ContainerStart success
-- [ ] Test ContainerStart records ID
-- [ ] Test ContainerStart returns error
-- [ ] Test ContainerStop success
-- [ ] Test ContainerStop records ID and timeout
-- [ ] Test ContainerStop idempotent behavior
+- [x] Test ContainerStart success
+- [x] Test ContainerStart records ID
+- [x] Test ContainerStart returns error
+- [x] Test ContainerStop success
+- [x] Test ContainerStop records ID and timeout
+- [x] Test ContainerStop idempotent behavior
 
 **Implement:**
-- [ ] Implement MockClient.ContainerStart
-- [ ] Implement MockClient.ContainerStop
+- [x] Implement MockClient.ContainerStart
+- [x] Implement MockClient.ContainerStop
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ### C4. MockClient ContainerRemove/Inspect
 
 **Test First:**
-- [ ] Test ContainerRemove success
-- [ ] Test ContainerRemove with force
-- [ ] Test ContainerRemove records options
-- [ ] Test ContainerInspect returns result
-- [ ] Test ContainerInspect not found error
+- [x] Test ContainerRemove success
+- [x] Test ContainerRemove with force
+- [x] Test ContainerRemove records options
+- [x] Test ContainerInspect returns result
+- [x] Test ContainerInspect not found error
 
 **Implement:**
-- [ ] Implement MockClient.ContainerRemove
-- [ ] Implement MockClient.ContainerInspect
+- [x] Implement MockClient.ContainerRemove
+- [x] Implement MockClient.ContainerInspect
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ### C5. MockClient ContainerList/Logs/Wait
 
 **Test First:**
-- [ ] Test ContainerList returns configured results
-- [ ] Test ContainerList with filters
-- [ ] Test ContainerLogs returns reader
-- [ ] Test ContainerWait returns channels
+- [x] Test ContainerList returns configured results
+- [x] Test ContainerList with filters
+- [x] Test ContainerLogs returns reader
+- [x] Test ContainerWait returns channels
 
 **Implement:**
-- [ ] Implement MockClient.ContainerList
-- [ ] Implement MockClient.ContainerLogs
-- [ ] Implement MockClient.ContainerWait
+- [x] Implement MockClient.ContainerList
+- [x] Implement MockClient.ContainerLogs
+- [x] Implement MockClient.ContainerWait
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ### C6. MockClient Reset Extension
 
 **Test First:**
-- [ ] Test Reset clears container call records
+- [x] Test Reset clears container call records
 
 **Implement:**
-- [ ] Extend MockClient.Reset to clear container fields
+- [x] Extend MockClient.Reset to clear container fields
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
 
 ---
 
@@ -186,75 +186,81 @@
 ### D1. Extend Client Interface
 
 **Implement:**
-- [ ] Add container methods to Client interface in client.go
-- [ ] Verify MockClient still implements Client (compile check)
+- [x] Add container methods to Client interface in client.go
+- [x] Verify MockClient still implements Client (compile check)
 
 **Verify:**
-- [ ] `go build ./...` succeeds
+- [x] `go build ./...` succeeds
 
 ### D2. ContainerCreate Implementation
 
 **Implement:**
-- [ ] Implement dockerClient.ContainerCreate
-- [ ] Map ContainerConfig to Docker SDK types
-- [ ] Handle port mappings
-- [ ] Handle volume mounts
-- [ ] Handle network connections
+- [x] Implement dockerClient.ContainerCreate
+- [x] Map ContainerConfig to Docker SDK types
+- [x] Handle port mappings
+- [x] Handle volume mounts
+- [x] Handle network connections
 
 **Verify:**
-- [ ] `go build ./...` succeeds
+- [x] `go build ./...` succeeds
 
 ### D3. ContainerStart/Stop Implementation
 
 **Implement:**
-- [ ] Implement dockerClient.ContainerStart
-- [ ] Implement dockerClient.ContainerStop with timeout
+- [x] Implement dockerClient.ContainerStart
+- [x] Implement dockerClient.ContainerStop with timeout
 
 **Verify:**
-- [ ] `go build ./...` succeeds
+- [x] `go build ./...` succeeds
 
 ### D4. ContainerRemove/Inspect Implementation
 
 **Implement:**
-- [ ] Implement dockerClient.ContainerRemove with options
-- [ ] Implement dockerClient.ContainerInspect
-- [ ] Convert Docker SDK response to Container type
+- [x] Implement dockerClient.ContainerRemove with options
+- [x] Implement dockerClient.ContainerInspect
+- [x] Convert Docker SDK response to Container type
 
 **Verify:**
-- [ ] `go build ./...` succeeds
+- [x] `go build ./...` succeeds
 
 ### D5. ContainerList Implementation
 
 **Implement:**
-- [ ] Implement dockerClient.ContainerList
-- [ ] Handle filter options
-- [ ] Convert Docker SDK responses
+- [x] Implement dockerClient.ContainerList
+- [x] Handle filter options
+- [x] Convert Docker SDK responses
 
 **Verify:**
-- [ ] `go build ./...` succeeds
+- [x] `go build ./...` succeeds
 
 ### D6. ContainerLogs/Wait Implementation
 
 **Implement:**
-- [ ] Implement dockerClient.ContainerLogs
-- [ ] Implement dockerClient.ContainerWait
+- [x] Implement dockerClient.ContainerLogs
+- [x] Implement dockerClient.ContainerWait
 
 **Verify:**
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
-- [ ] `go vet ./...` clean
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
+- [x] `go vet ./...` clean
 
 ---
 
 ## Completion Checklist
 
-- [ ] All container types defined with JSON/YAML tags
-- [ ] All error constructors implemented and tested
-- [ ] Client interface extended with container methods
-- [ ] MockClient implements all container operations
-- [ ] dockerClient implements all container operations
-- [ ] All unit tests follow Go idioms (table-driven, t.Parallel, cmp.Diff)
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes (expect 70+ tests in docker package)
-- [ ] `go vet ./...` clean
-- [ ] TASKS.md fully checked off
+- [x] All container types defined with JSON/YAML tags
+- [x] All error constructors implemented and tested
+- [x] Client interface extended with container methods
+- [x] MockClient implements all container operations
+- [x] dockerClient implements all container operations
+- [x] All unit tests follow Go idioms (table-driven, t.Parallel, cmp.Diff)
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes (expect 70+ tests in docker package)
+- [x] `go vet ./...` clean
+- [x] TASKS.md fully checked off
+
+---
+
+## Status
+
+**COMPLETE** - All tasks finished.

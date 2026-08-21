@@ -1,0 +1,9 @@
+services:
+  app:
+    image: "example:${YAR_COMPOSE_TEST_VALUE}"
+    environment:
+      FROM_ENV: "${YAR_COMPOSE_TEST_VALUE}"
+    env_file:
+      - does-not-exist.env
+    label_file:
+      - does-not-exist.labels

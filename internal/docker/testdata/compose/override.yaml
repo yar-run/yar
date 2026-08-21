@@ -1,0 +1,7 @@
+services:
+  app:
+    image: ghcr.io/acme/app:override
+    environment:
+      LOG_LEVEL: debug
+    ports:
+      - "9090:8080"

@@ -1,7 +1,9 @@
 package docker
 
 import (
+	"context"
 	"crypto/tls"
+	"errors"
 	"net/http"
 	"testing"
 	"time"
@@ -234,4 +236,51 @@ func TestDockerClient_ImplementsClient(t *testing.T) {
 
 	// Compile-time assertion that dockerClient implements Client interface.
 	var _ Client = (*dockerClient)(nil)
+}
+
+func TestDockerClient_OperationContext(t *testing.T) {
+	t.Parallel()
+
+	tests := map[string]struct {
+		timeout        time.Duration
+		expectDeadline bool
+	}{
+		"uses configured timeout": {
+			timeout:        time.Second,
+			expectDeadline: true,
+		},
+		"keeps caller context without timeout": {
+			timeout:        0,
+			expectDeadline: false,
+		},
+	}
+
+	for name, tc := range tests {
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+
+			client := &dockerClient{timeout: tc.timeout}
+			ctx, cancel := client.operationContext(context.Background())
+			t.Cleanup(cancel)
+			_, gotDeadline := ctx.Deadline()
+			if gotDeadline != tc.expectDeadline {
+				t.Errorf("operationContext() has deadline = %v, want %v", gotDeadline, tc.expectDeadline)
+			}
+		})
+	}
+}
+
+func TestDockerClient_OperationContextPreservesCallerDeadline(t *testing.T) {
+	t.Parallel()
+
+	callerCtx, callerCancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	t.Cleanup(callerCancel)
+	client := &dockerClient{timeout: time.Second}
+	ctx, cancel := client.operationContext(callerCtx)
+	t.Cleanup(cancel)
+
+	<-ctx.Done()
+	if !errors.Is(ctx.Err(), context.DeadlineExceeded) {
+		t.Errorf("operationContext() error = %v, want deadline exceeded", ctx.Err())
+	}
 }

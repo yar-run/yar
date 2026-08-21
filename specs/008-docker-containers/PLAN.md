@@ -61,10 +61,10 @@ This iteration extends the Docker client wrapper with container lifecycle operat
 ## Verification
 
 After completion:
-- [ ] All new types are exported and documented
-- [ ] Client interface includes all container methods
-- [ ] MockClient implements extended Client interface
-- [ ] All tests follow idiomatic Go patterns
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes (50+ tests in docker package)
-- [ ] `go vet ./...` clean
+- [x] All new types are exported and documented
+- [x] Client interface includes all container methods
+- [x] MockClient implements extended Client interface
+- [x] All tests follow idiomatic Go patterns
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes (50+ tests in docker package)
+- [x] `go vet ./...` clean

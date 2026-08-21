@@ -132,6 +132,14 @@ type ContainerState struct {
     FinishedAt time.Time `json:"finished_at"`
     Error      string    `json:"error,omitempty"`
 }
+
+// PortBinding represents an exposed port on a container.
+type PortBinding struct {
+    HostIP        string `json:"host_ip,omitempty" yaml:"host_ip,omitempty"`
+    HostPort      string `json:"host_port,omitempty" yaml:"host_port,omitempty"`
+    ContainerPort string `json:"container_port" yaml:"container_port"`
+    Protocol      string `json:"protocol,omitempty" yaml:"protocol,omitempty"`
+}
 ```
 
 ### ContainerConfig
@@ -250,6 +258,9 @@ func ErrContainerList(err error) *DockerError
 // ErrContainerLogs creates a container logs error.
 func ErrContainerLogs(id string, err error) *DockerError
 
+// ErrContainerWait creates a container wait error.
+func ErrContainerWait(id string, err error) *DockerError
+
 // ErrContainerNotFound creates a container not found error.
 func ErrContainerNotFound(id string) *DockerError
 
@@ -301,44 +312,45 @@ Reference applicable invariants from root SPEC.md:
 ### Unit Tests
 
 #### container_types_test.go
-- [ ] Container struct field access
-- [ ] ContainerState status values
-- [ ] ContainerConfig with all fields populated
-- [ ] PortMapping defaults (protocol, host IP)
-- [ ] VolumeMount types (bind, volume, tmpfs)
-- [ ] RestartPolicy values
-- [ ] ContainerRemoveOptions defaults
-- [ ] ContainerListOptions filters
-- [ ] ContainerLogOptions combinations
-- [ ] WaitCondition constants
+- [x] Container struct field access
+- [x] ContainerState status values
+- [x] ContainerConfig with all fields populated
+- [x] PortMapping defaults (protocol, host IP)
+- [x] VolumeMount types (bind, volume, tmpfs)
+- [x] RestartPolicy values
+- [x] ContainerRemoveOptions defaults
+- [x] ContainerListOptions filters
+- [x] ContainerLogOptions combinations
+- [x] WaitCondition constants
 
 #### mock_container_test.go
-- [ ] MockClient.ContainerCreate returns configured ID
-- [ ] MockClient.ContainerCreate records call details
-- [ ] MockClient.ContainerCreate returns configured error
-- [ ] MockClient.ContainerCreate callback behavior
-- [ ] MockClient.ContainerStart success
-- [ ] MockClient.ContainerStart records ID
-- [ ] MockClient.ContainerStart returns error
-- [ ] MockClient.ContainerStop success
-- [ ] MockClient.ContainerStop records ID and timeout
-- [ ] MockClient.ContainerStop idempotent for stopped container
-- [ ] MockClient.ContainerRemove success
-- [ ] MockClient.ContainerRemove with force
-- [ ] MockClient.ContainerRemove records options
-- [ ] MockClient.ContainerInspect returns result
-- [ ] MockClient.ContainerInspect not found error
-- [ ] MockClient.ContainerList returns configured results
-- [ ] MockClient.ContainerList with filters
-- [ ] MockClient.ContainerLogs returns reader
-- [ ] MockClient.ContainerWait returns channel
-- [ ] MockClient.Reset clears container call records
+- [x] MockClient.ContainerCreate returns configured ID
+- [x] MockClient.ContainerCreate records call details
+- [x] MockClient.ContainerCreate returns configured error
+- [x] MockClient.ContainerCreate callback behavior
+- [x] MockClient.ContainerStart success
+- [x] MockClient.ContainerStart records ID
+- [x] MockClient.ContainerStart returns error
+- [x] MockClient.ContainerStop success
+- [x] MockClient.ContainerStop records ID and timeout
+- [x] MockClient.ContainerStop idempotent for stopped container
+- [x] MockClient.ContainerRemove success
+- [x] MockClient.ContainerRemove with force
+- [x] MockClient.ContainerRemove records options
+- [x] MockClient.ContainerInspect returns result
+- [x] MockClient.ContainerInspect not found error
+- [x] MockClient.ContainerList returns configured results
+- [x] MockClient.ContainerList with filters
+- [x] MockClient.ContainerLogs returns reader
+- [x] MockClient.ContainerWait returns channel
+- [x] MockClient.Reset clears container call records
 
 #### errors_test.go (additions)
-- [ ] ErrContainerCreate formats correctly
-- [ ] ErrContainerNotFound formats correctly
-- [ ] ErrContainerAlreadyExists formats correctly
-- [ ] ErrContainerRunning formats correctly
+- [x] ErrContainerCreate formats correctly
+- [x] ErrContainerNotFound formats correctly
+- [x] ErrContainerAlreadyExists formats correctly
+- [x] ErrContainerRunning formats correctly
+- [x] ErrContainerWait formats correctly
 
 ### Integration Tests
 - Deferred to iteration 032 (requires Docker daemon)
@@ -347,15 +359,15 @@ Reference applicable invariants from root SPEC.md:
 
 ## Exit Criteria
 
-- [ ] Client interface extended with all container methods
-- [ ] All container types defined with proper JSON/YAML tags
-- [ ] All error constructors implemented
-- [ ] MockClient supports all container operations
-- [ ] All unit tests pass following Go idioms:
+- [x] Client interface extended with all container methods
+- [x] All container types defined with proper JSON/YAML tags
+- [x] All error constructors implemented
+- [x] MockClient supports all container operations
+- [x] All unit tests pass following Go idioms:
   - Table-driven tests with map[string]struct{}
   - t.Run() with descriptive names
   - t.Parallel() for isolation
   - cmp.Diff() for struct comparisons
-- [ ] `go build ./...` succeeds
-- [ ] `go test ./...` passes
-- [ ] `go vet ./...` clean
+- [x] `go build ./...` succeeds
+- [x] `go test ./...` passes
+- [x] `go vet ./...` clean

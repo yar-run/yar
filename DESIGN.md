@@ -13,6 +13,18 @@ Use native Go SDKs for Docker, Kubernetes, and Helm rather than shelling out to 
 
 **Exception**: Where no Go SDK exists (Colima, OpenVPN, pass), use CLI wrappers with structured output parsing.
 
+Yar replaces hand-assembled local-environment orchestration, not Docker, Helm, Kubernetes, Colima, or OpenVPN themselves. It expresses project intent through their native APIs where available and narrow, structured platform adapters where necessary.
+
+### 1a. Portable Infrastructure, Not Bespoke Rituals
+Yar subsumes the responsibilities traditionally split across project-specific Compose scripts, shell wrappers, Ansible playbooks, and machine-local networking utilities:
+- Lifecycle management for development sidecars such as Redis, RabbitMQ, and Kafka
+- Production-shaped local service identity and reachability, including DNS names such as `redis.foo`
+- First-class secret management through a versioned secret contract resolved from shared providers instead of distributed `.env` files
+- A declarative system model for services, dependencies, networking, configuration, identities, secret references, and environment targets
+- Safe, project-scoped resource ownership so multiple projects can coexist on one Docker host
+
+The declarative system model is the source of truth. Yar derives local Docker runtime behavior and production Helm/Kubernetes artifacts from it, rather than asking developers to keep separate Compose, deployment, and `.env` conventions synchronized. The implementation is a clean installer plus a cross-platform Go executable. It must preserve the useful operational outcomes of earlier scripts while making those outcomes declarative, inspectable, testable, and portable.
+
 ### 2. Configuration as Code
 All configuration is declarative YAML validated against JSON Schemas:
 - Global config: `~/.config/yar/config.yaml`
