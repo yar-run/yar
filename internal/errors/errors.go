@@ -122,10 +122,16 @@ type KubernetesError struct {
 }
 
 func (e *KubernetesError) Error() string {
+	var base string
 	if e.Namespace != "" {
-		return fmt.Sprintf("kubernetes error: %s %s/%s in %s", e.Op, e.Resource, e.Name, e.Namespace)
+		base = fmt.Sprintf("kubernetes error: %s %s/%s in %s", e.Op, e.Resource, e.Name, e.Namespace)
+	} else {
+		base = fmt.Sprintf("kubernetes error: %s %s/%s", e.Op, e.Resource, e.Name)
 	}
-	return fmt.Sprintf("kubernetes error: %s %s/%s", e.Op, e.Resource, e.Name)
+	if e.Err != nil {
+		return fmt.Sprintf("%s: %v", base, e.Err)
+	}
+	return base
 }
 
 func (e *KubernetesError) Unwrap() error {

@@ -12,6 +12,9 @@ import (
 // Returns the network ID on success. If the network already exists, returns
 // the existing network's ID (idempotent).
 func (c *dockerClient) NetworkCreate(ctx context.Context, name string, opts NetworkCreateOptions) (string, error) {
+	ctx, cancel := c.operationContext(ctx)
+	defer cancel()
+
 	// Check if network already exists (idempotent)
 	existing, err := c.findNetworkByName(ctx, name)
 	if err != nil {
@@ -71,6 +74,9 @@ func (c *dockerClient) NetworkCreate(ctx context.Context, name string, opts Netw
 // NetworkRemove removes a Docker network by name.
 // Returns nil if the network doesn't exist (idempotent).
 func (c *dockerClient) NetworkRemove(ctx context.Context, name string) error {
+	ctx, cancel := c.operationContext(ctx)
+	defer cancel()
+
 	err := c.cli.NetworkRemove(ctx, name)
 	if err != nil {
 		// Check if network not found (idempotent)
@@ -93,6 +99,9 @@ func (c *dockerClient) NetworkRemove(ctx context.Context, name string) error {
 
 // NetworkList lists Docker networks with optional filters.
 func (c *dockerClient) NetworkList(ctx context.Context, opts NetworkListOptions) ([]Network, error) {
+	ctx, cancel := c.operationContext(ctx)
+	defer cancel()
+
 	// Build filters
 	filterArgs := filters.NewArgs()
 	for key, values := range opts.Filters {
@@ -120,6 +129,9 @@ func (c *dockerClient) NetworkList(ctx context.Context, opts NetworkListOptions)
 
 // NetworkInspect returns detailed information about a specific network.
 func (c *dockerClient) NetworkInspect(ctx context.Context, name string) (*Network, error) {
+	ctx, cancel := c.operationContext(ctx)
+	defer cancel()
+
 	resp, err := c.cli.NetworkInspect(ctx, name, network.InspectOptions{})
 	if err != nil {
 		if strings.Contains(err.Error(), "not found") ||

@@ -76,3 +76,60 @@ func ErrDaemonConnection(err error) *DockerError {
 		Err:     err,
 	}
 }
+
+// Container error constructors
+
+// ErrContainerCreate creates a container creation error.
+func ErrContainerCreate(name string, err error) *DockerError {
+	return NewDockerError("container.create", name, "failed to create container", err)
+}
+
+// ErrContainerStart creates a container start error.
+func ErrContainerStart(id string, err error) *DockerError {
+	return NewDockerError("container.start", id, "failed to start container", err)
+}
+
+// ErrContainerStop creates a container stop error.
+func ErrContainerStop(id string, err error) *DockerError {
+	return NewDockerError("container.stop", id, "failed to stop container", err)
+}
+
+// ErrContainerRemove creates a container removal error.
+func ErrContainerRemove(id string, err error) *DockerError {
+	return NewDockerError("container.remove", id, "failed to remove container", err)
+}
+
+// ErrContainerInspect creates a container inspect error.
+func ErrContainerInspect(id string, err error) *DockerError {
+	return NewDockerError("container.inspect", id, "failed to inspect container", err)
+}
+
+// ErrContainerList creates a container list error.
+func ErrContainerList(err error) *DockerError {
+	return NewDockerError("container.list", "", "failed to list containers", err)
+}
+
+// ErrContainerLogs creates a container logs error.
+func ErrContainerLogs(id string, err error) *DockerError {
+	return NewDockerError("container.logs", id, "failed to get container logs", err)
+}
+
+// ErrContainerWait creates a container wait error.
+func ErrContainerWait(id string, err error) *DockerError {
+	return NewDockerError("container.wait", id, "failed to wait for container", err)
+}
+
+// ErrContainerNotFound creates a container not found error.
+func ErrContainerNotFound(id string) *DockerError {
+	return NewDockerError("container.inspect", id, "container not found", nil)
+}
+
+// ErrContainerAlreadyExists creates a container already exists error.
+func ErrContainerAlreadyExists(name string) *DockerError {
+	return NewDockerError("container.create", name, "container already exists", nil)
+}
+
+// ErrContainerRunning creates an error for operations on running containers.
+func ErrContainerRunning(id string) *DockerError {
+	return NewDockerError("container.remove", id, "container is running", nil)
+}

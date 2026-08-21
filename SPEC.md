@@ -72,6 +72,26 @@ These invariants MUST hold true at all times. Violations are bugs.
 
 21. **INV-NET-003**: Yar-managed host entries MUST be clearly marked with comments (e.g., `# yar:managed`).
 
+### Resource Ownership Invariants
+
+- **INV-OWN-001**: Yar MUST mutate or destroy only resources whose Yar ownership is established by project/environment identity and Yar-managed labels or state. Ambiguous or external resources MUST be left untouched.
+
+- **INV-OWN-002**: Reading machine or platform configuration, including Docker state and kubeconfig files, MUST NOT mutate that configuration.
+
+### Kubernetes Invariants
+
+- **INV-K8S-001**: Kubeconfig loading and context selection MUST occur in memory. Yar MUST NOT rewrite a kubeconfig, change its current context, persist credentials, or create a kubeconfig lock file.
+
+- **INV-K8S-002**: Kubernetes connection checks MUST be read-only and respect the caller's context cancellation and deadline.
+
+### Helm Invariants
+
+- **INV-HLM-001**: Local Helm rendering MUST be deterministic from the supplied chart, values, pinned capabilities, and release options. It MUST NOT contact a cluster, read kubeconfig, write discovery caches, or execute network-dependent template functions.
+
+- **INV-HLM-002**: Helm release lifecycle operations MUST use the Kubernetes context selected in memory by Yar. They MUST NOT invoke the Helm CLI, re-read or rewrite kubeconfig, or create filesystem discovery/cache artifacts.
+
+- **INV-HLM-003**: Helm release mutations MUST use a deterministic Yar release identity and Yar project/environment labels. Yar MUST NOT use Helm ownership-takeover options or uninstall a release unless its stored release labels exactly match Yar ownership.
+
 ### Development Process Invariants
 
 22. **INV-DEV-001**: Each iteration MUST have specs created before implementation begins (`specs/{###}-{name}/SPEC.md`, `PLAN.md`, `TASKS.md`).
@@ -698,10 +718,12 @@ type Client interface {
     // Container operations
     ContainerCreate(ctx context.Context, config ContainerConfig) (string, error)
     ContainerStart(ctx context.Context, id string) error
-    ContainerStop(ctx context.Context, id string, timeout time.Duration) error
-    ContainerRemove(ctx context.Context, id string, opts RemoveOptions) error
-    ContainerList(ctx context.Context, opts ListOptions) ([]Container, error)
-    ContainerLogs(ctx context.Context, id string, opts LogOptions) (io.ReadCloser, error)
+    ContainerStop(ctx context.Context, id string, timeout *time.Duration) error
+    ContainerRemove(ctx context.Context, id string, opts ContainerRemoveOptions) error
+    ContainerInspect(ctx context.Context, id string) (*Container, error)
+    ContainerList(ctx context.Context, opts ContainerListOptions) ([]Container, error)
+    ContainerLogs(ctx context.Context, id string, opts ContainerLogOptions) (io.ReadCloser, error)
+    ContainerWait(ctx context.Context, id string, condition WaitCondition) (<-chan ContainerWaitResult, <-chan error)
     
     // Image operations
     ImagePull(ctx context.Context, ref string) error
@@ -720,8 +742,8 @@ type Client interface {
     // Apply manifests (like kubectl apply)
     Apply(ctx context.Context, manifests []byte, opts ApplyOptions) error
     
-    // Delete resources
-    Delete(ctx context.Context, manifests []byte) error
+    // Delete Yar-owned resources declared by manifests
+    Delete(ctx context.Context, manifests []byte, opts DeleteOptions) error
     
     // Get resources
     Get(ctx context.Context, gvk schema.GroupVersionKind, namespace, name string) (*unstructured.Unstructured, error)
@@ -734,6 +756,59 @@ type Client interface {
     
     // Wait for condition
     WaitFor(ctx context.Context, gvk schema.GroupVersionKind, namespace, name string, condition WaitCondition, timeout time.Duration) error
+}
+
+type ApplyOptions struct {
+    FieldManager string
+    Force        *bool // nil defaults to true; false preserves SSA conflicts
+    DryRun       bool
+}
+
+type DeleteOptions struct {
+    PropagationPolicy string
+}
+
+type ListOptions struct {
+    LabelSelector string
+    Limit         int64
+    Continue      string
+}
+```
+
+#### helm.Client
+
+```go
+type Client interface {
+    // LoadChart loads and validates a chart from an explicit path.
+    LoadChart(path string) (*chart.Chart, error)
+
+    // LoadChartFiles loads and validates a chart from in-memory files.
+    LoadChartFiles(files []ChartFile) (*chart.Chart, error)
+
+    // Render deterministically renders a chart without contacting a cluster.
+    Render(ctx context.Context, chart *chart.Chart, release Release, values map[string]any, opts RenderOptions) (*RenderResult, error)
+
+    // Install creates a Yar-owned release.
+    Install(ctx context.Context, chart *chart.Chart, release Release, values map[string]any, opts InstallOptions) (*release.Release, error)
+
+    // Upgrade updates an exact Yar-owned release.
+    Upgrade(ctx context.Context, chart *chart.Chart, release Release, values map[string]any, opts UpgradeOptions) (*release.Release, error)
+
+    // Uninstall removes an exact Yar-owned release.
+    Uninstall(ctx context.Context, release Release, opts UninstallOptions) error
+}
+
+type Release struct {
+    Name        string
+    Namespace   string
+    Project     string
+    Environment string
+}
+
+type RenderOptions struct {
+    KubeVersion string
+    APIVersions []string
+    IncludeCRDs bool
 }
 ```
 

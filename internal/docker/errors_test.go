@@ -183,6 +183,72 @@ func TestErrorConstructors(t *testing.T) {
 			wantName:    "",
 			wantHasErr:  true,
 		},
+		"ErrContainerCreate": {
+			constructor: func() *DockerError { return ErrContainerCreate("web", underlying) },
+			wantOp:      "container.create",
+			wantName:    "web",
+			wantHasErr:  true,
+		},
+		"ErrContainerStart": {
+			constructor: func() *DockerError { return ErrContainerStart("container-123", underlying) },
+			wantOp:      "container.start",
+			wantName:    "container-123",
+			wantHasErr:  true,
+		},
+		"ErrContainerStop": {
+			constructor: func() *DockerError { return ErrContainerStop("container-123", underlying) },
+			wantOp:      "container.stop",
+			wantName:    "container-123",
+			wantHasErr:  true,
+		},
+		"ErrContainerRemove": {
+			constructor: func() *DockerError { return ErrContainerRemove("container-123", underlying) },
+			wantOp:      "container.remove",
+			wantName:    "container-123",
+			wantHasErr:  true,
+		},
+		"ErrContainerInspect": {
+			constructor: func() *DockerError { return ErrContainerInspect("container-123", underlying) },
+			wantOp:      "container.inspect",
+			wantName:    "container-123",
+			wantHasErr:  true,
+		},
+		"ErrContainerList": {
+			constructor: func() *DockerError { return ErrContainerList(underlying) },
+			wantOp:      "container.list",
+			wantName:    "",
+			wantHasErr:  true,
+		},
+		"ErrContainerLogs": {
+			constructor: func() *DockerError { return ErrContainerLogs("container-123", underlying) },
+			wantOp:      "container.logs",
+			wantName:    "container-123",
+			wantHasErr:  true,
+		},
+		"ErrContainerWait": {
+			constructor: func() *DockerError { return ErrContainerWait("container-123", underlying) },
+			wantOp:      "container.wait",
+			wantName:    "container-123",
+			wantHasErr:  true,
+		},
+		"ErrContainerNotFound": {
+			constructor: func() *DockerError { return ErrContainerNotFound("container-123") },
+			wantOp:      "container.inspect",
+			wantName:    "container-123",
+			wantHasErr:  false,
+		},
+		"ErrContainerAlreadyExists": {
+			constructor: func() *DockerError { return ErrContainerAlreadyExists("web") },
+			wantOp:      "container.create",
+			wantName:    "web",
+			wantHasErr:  false,
+		},
+		"ErrContainerRunning": {
+			constructor: func() *DockerError { return ErrContainerRunning("container-123") },
+			wantOp:      "container.remove",
+			wantName:    "container-123",
+			wantHasErr:  false,
+		},
 	}
 
 	for name, tc := range tests {

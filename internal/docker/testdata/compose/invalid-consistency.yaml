@@ -1,0 +1,6 @@
+services:
+  app:
+    image: nginx:latest
+    depends_on:
+      missing:
+        condition: service_started

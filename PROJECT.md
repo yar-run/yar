@@ -6,6 +6,8 @@
 
 Development environments should be indistinguishable from production. A developer running `yar up` on their laptop should have the same service topology, networking, secret management, and configuration as a production cluster. When code works locally, it works in production.
 
+Yar replaces bespoke local-environment toolchains such as shell-scripted Compose wrappers, ad-hoc Ansible, and machine-specific Docker networking setup. It provides their useful capabilities - supporting sidecars, production-shaped DNS identities, host reachability, lifecycle management, secret management, and a declarative system model - as one machine-portable, programmable system.
+
 ## Problem Statement
 
 Modern microservice development suffers from environment drift:
@@ -27,6 +29,8 @@ Yar provides:
 - **Network Transparency**: VPN/DNS/hosts management so containers are accessible by name across all platforms
 - **Environment Parity**: Same `yar.yaml` project config drives local and production, with environment-specific overrides
 - **Secret Inventory**: `yar.yaml` declares all required secrets by reference; `yar fleet up` validates all secrets exist locally before starting, giving developers immediate feedback on what's missing
+- **Native Platform Integration**: A clean installer and Go executable use Docker Engine, Helm, and Kubernetes SDKs directly, cooperating with those platforms rather than wrapping fragile shell workflows around them
+- **Declarative System Model**: `yar.yaml` models services, dependencies, identities, networks, configuration, secret references, and environment targets as the versioned contract from which local and production runtimes are derived
 
 ## Objectives
 
@@ -36,7 +40,8 @@ Yar provides:
 2. **Zero-Secret Exposure**: Secrets never appear in `.env` files, git history, or environment variables; they're resolved from secure stores at runtime
 3. **Cross-Platform Support**: First-class support for macOS (Intel/Apple Silicon), Linux, and Windows
 4. **SDK-Native Operations**: Use Docker, Kubernetes, and Helm Go SDKs directly—no shelling out to CLIs for core operations
-5. **Single Source of Truth**: One pack definition generates all deployment artifacts (compose, Helm, raw K8s manifests)
+5. **Single Source of Truth**: A declarative system model and its packs generate all deployment artifacts (compose, Helm, raw K8s manifests)
+6. **Portable Local Infrastructure**: Replace per-machine scripts and configuration rituals with reproducible, project-scoped local infrastructure
 
 ### Secondary Objectives
 

@@ -3,6 +3,7 @@ package docker
 import (
 	"context"
 	"crypto/tls"
+	"io"
 	"net/http"
 	"time"
 
@@ -16,6 +17,16 @@ type Client interface {
 	NetworkRemove(ctx context.Context, name string) error
 	NetworkList(ctx context.Context, opts NetworkListOptions) ([]Network, error)
 	NetworkInspect(ctx context.Context, name string) (*Network, error)
+
+	// Container operations
+	ContainerCreate(ctx context.Context, config ContainerConfig) (string, error)
+	ContainerStart(ctx context.Context, id string) error
+	ContainerStop(ctx context.Context, id string, timeout *time.Duration) error
+	ContainerRemove(ctx context.Context, id string, opts ContainerRemoveOptions) error
+	ContainerInspect(ctx context.Context, id string) (*Container, error)
+	ContainerList(ctx context.Context, opts ContainerListOptions) ([]Container, error)
+	ContainerLogs(ctx context.Context, id string, opts ContainerLogOptions) (io.ReadCloser, error)
+	ContainerWait(ctx context.Context, id string, condition WaitCondition) (<-chan ContainerWaitResult, <-chan error)
 
 	// Ping checks Docker daemon connectivity
 	Ping(ctx context.Context) error
@@ -43,7 +54,7 @@ func WithHost(host string) Option {
 	}
 }
 
-// WithTimeout sets the operation timeout.
+// WithTimeout sets the timeout for non-streaming operations.
 func WithTimeout(timeout time.Duration) Option {
 	return func(o *clientOptions) {
 		o.timeout = timeout
@@ -111,7 +122,6 @@ func NewClient(opts ...Option) (Client, error) {
 		}
 		httpClient := &http.Client{
 			Transport: transport,
-			Timeout:   options.timeout,
 		}
 		clientOpts = append(clientOpts, dockerclient.WithHTTPClient(httpClient))
 	}
@@ -130,6 +140,9 @@ func NewClient(opts ...Option) (Client, error) {
 
 // Ping checks Docker daemon connectivity.
 func (c *dockerClient) Ping(ctx context.Context) error {
+	ctx, cancel := c.operationContext(ctx)
+	defer cancel()
+
 	_, err := c.cli.Ping(ctx)
 	if err != nil {
 		return ErrDaemonConnection(err)
@@ -145,4 +158,11 @@ func (c *dockerClient) Close() error {
 // getDockerClient returns the underlying Docker client (for network.go).
 func (c *dockerClient) getDockerClient() *dockerclient.Client {
 	return c.cli
+}
+
+func (c *dockerClient) operationContext(ctx context.Context) (context.Context, context.CancelFunc) {
+	if c.timeout <= 0 {
+		return ctx, func() {}
+	}
+	return context.WithTimeout(ctx, c.timeout)
 }

@@ -162,6 +162,7 @@ func TestSecretError(t *testing.T) {
 			t.Errorf("Unwrap() = %v, want %v", err.Unwrap(), underlying)
 		}
 	})
+
 }
 
 // TestPackError tests PackError formatting and unwrapping
@@ -187,6 +188,20 @@ func TestPackError(t *testing.T) {
 		}
 		if err.Unwrap() != underlying {
 			t.Errorf("Unwrap() = %v, want %v", err.Unwrap(), underlying)
+		}
+	})
+
+	t.Run("Error includes underlying error", func(t *testing.T) {
+		underlying := errors.New("connection refused")
+		err := &KubernetesError{
+			Op:       "probe",
+			Resource: "api-server",
+			Name:     "development",
+			Err:      underlying,
+		}
+		want := "kubernetes error: probe api-server/development: connection refused"
+		if got := err.Error(); got != want {
+			t.Errorf("Error() = %q, want %q", got, want)
 		}
 	})
 }
